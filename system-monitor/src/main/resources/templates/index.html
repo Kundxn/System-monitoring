@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>System Monitor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .metric {
+            background-color: #333;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        .metric h2 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        .metric p {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        // Function to fetch system metrics from the backend
+        function fetchSystemMetrics() {
+            fetch('/api/system-metrics')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the page with the new data
+                    document.getElementById('cpu').innerText = `CPU Usage: ${data.cpuCores[0].utilization}%`;
+                    document.getElementById('memory').innerText = `Memory Used: ${(data.memoryInfo.used / 1024 / 1024).toFixed(2)} MB`;
+
+                })
+                .catch(error => console.error('Error fetching system metrics:', error));
+        }
+
+        // Fetch data every 5 seconds (adjust as necessary)
+        setInterval(fetchSystemMetrics, 5000);
+    </script>
+</head>
+<body onload="fetchSystemMetrics()">
+<h1>Real-Time System Usage</h1>
+
+<div class="metric">
+    <h2>CPU Usage</h2>
+    <p id="cpu">Loading...</p>
+</div>
+
+<div class="metric">
+    <h2>Memory Usage</h2>
+    <p id="memory">Loading...</p>
+</div>
+
+
+<script>
+    // Initial fetch when the page loads
+    fetchSystemMetrics();
+</script>
+</body>
+</html>
